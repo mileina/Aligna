@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI JobMatch - Smart Career Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://unpkg.com/mammoth/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/splitting@1.0.6/dist/splitting.css" rel="stylesheet">
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .hero-bg { background-image: url('resources/hero-bg.jpg'); background-size: cover; background-position: center; }
+        .glass-nav { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .upload-zone { border: 2px dashed #2563EB; transition: all 0.3s ease; }
+        .upload-zone.dragover { border-color: #1D4ED8; background-color: #EFF6FF; }
+        .progress-bar { background: linear-gradient(90deg, #2563EB 0%, #3B82F6 100%); }
+        .typing-cursor { color: #2563EB; }
+        .nav-item { transition: all 0.3s ease; }
+        .nav-item.active { background-color: #2563EB; color: white; }
+        .nav-item:hover { background-color: #F3F4F6; }
+        .nav-item.active:hover { background-color: #1D4ED8; }
+        .match-score { background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%); }
+        .filter-chip { transition: all 0.3s ease; }
+        .filter-chip:hover { background-color: #EFF6FF; }
+        .filter-chip.active { background-color: #2563EB; color: white; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Navigation Sidebar -->
+    <nav class="fixed left-0 top-0 h-full w-64 glass-nav border-r border-gray-200 z-50">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-gray-900">AI JobMatch</h1>
+            </div>
+            
+            <div class="space-y-2">
+                <a href="index.html" class="nav-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                    </svg>
+                    <span id="nav-dashboard-label" class="font-medium">Dashboard</span>
+                </a>
+                
+                <a href="auto-apply.html" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    <span id="nav-auto-apply-label" class="font-medium">Auto Apply</span>
+                </a>
+                
+                <a href="recruiter.html" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span id="nav-recruiter-label" class="font-medium">Recruiter</span>
+                </a>
+            </div>
+
+            <div class="mt-6 rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+                <label id="language-label" for="language-switcher" class="mb-2 block text-xs font-semibold uppercase tracking-[0.16em] text-gray-500">Language</label>
+                <select id="language-switcher" class="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-900 outline-none transition focus:border-blue-500 focus:bg-white">
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-6 left-6 right-6">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3">
+                    <img src="resources/candidate-1.jpg" alt="User" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <p class="font-medium text-sm text-gray-900">Sarah Chen</p>
+                        <p id="user-role-label" class="text-xs text-gray-500">Job Seeker</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+        <!-- Hero Section -->
+        <section class="hero-bg relative h-48 flex items-center">
+            <div class="absolute inset-0 bg-white bg-opacity-80"></div>
+            <div class="relative z-10 px-8">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    <span id="typed-text"></span>
+                </h2>
+                <p id="hero-subtitle" class="text-lg text-gray-600">AI-powered job matching that understands your skills and aspirations</p>
+            </div>
+        </section>
+
+        <!-- Dashboard Content -->
+        <div class="px-8 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- CV Upload & Analysis -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover">
+                        <h3 id="upload-title" class="text-xl font-semibold text-gray-900 mb-6">Upload Your CV</h3>
+                        
+                        <div id="upload-zone" class="upload-zone rounded-lg p-8 text-center mb-6">
+                            <svg class="w-12 h-12 text-blue-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            <p id="upload-drop-title" class="text-lg font-medium text-gray-900 mb-2">Drop your CV here</p>
+                            <p id="upload-drop-subtitle" class="text-sm text-gray-500 mb-4">or click to browse files</p>
+                            <input type="file" id="cv-upload" class="hidden" accept=".pdf,.doc,.docx,.txt,.md">
+                            <button id="upload-button" onclick="document.getElementById('cv-upload').click()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                Choose File
+                            </button>
+                            <p id="upload-format" class="mt-3 text-xs text-gray-500">PDF, DOCX, DOC or TXT (max 5MB)</p>
+                        </div>
+                        
+                        <div id="analysis-results" class="space-y-4 hidden">
+                            <div class="rounded-2xl border border-blue-200 bg-blue-50/70 p-4 shadow-sm">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm">
+                                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p id="analysis-file-name" class="text-sm font-semibold text-gray-900">CV analysé</p>
+                                            <p id="analysis-file-status" class="text-sm text-blue-700">Analyse complétée avec succès</p>
+                                        </div>
+                                    </div>
+                                    <span id="analysis-status-title" class="rounded-full bg-white px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm">Analyse terminée</span>
+                                </div>
+                                <p id="analysis-status-body" class="mt-3 text-sm text-slate-700">Your CV has been analyzed and matched with relevant positions.</p>
+                            </div>
+
+                            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <p id="analysis-profile-label" class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Résumé du profil</p>
+                                <p id="analysis-profile-summary" class="mt-2 text-sm leading-6 text-slate-700"></p>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                    <p id="analysis-profession-label" class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Profession</p>
+                                    <p id="analysis-profession" class="mt-1 text-base font-semibold text-slate-900">-</p>
+                                </div>
+                                <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                                    <p id="analysis-level-label" class="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Niveau</p>
+                                    <p id="analysis-level" class="mt-1 text-base font-semibold text-slate-900">-</p>
+                                </div>
+                            </div>
+
+                            <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                                <div class="flex items-center justify-between">
+                                    <span id="analysis-skills-label" class="text-sm font-semibold text-slate-900">Compétences techniques</span>
+                                </div>
+                                <div id="analysis-skills" class="mt-4 flex flex-wrap gap-2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Insights -->
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover mt-6">
+                        <h3 id="ai-insights-title" class="text-xl font-semibold text-gray-900 mb-4">AI Insights</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                                <div>
+                                    <p id="insight-1-title" class="text-sm font-medium text-gray-900">Add Python Skills</p>
+                                    <p id="insight-1-body" class="text-xs text-gray-500">65% of matching jobs require Python</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                                <div>
+                                    <p id="insight-2-title" class="text-sm font-medium text-gray-900">Update Location</p>
+                                    <p id="insight-2-body" class="text-xs text-gray-500">Remote work options available</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-blue-600 rounded-full mt-2"></div>
+                                <div>
+                                    <p id="insight-3-title" class="text-sm font-medium text-gray-900">Certification Boost</p>
+                                    <p id="insight-3-body" class="text-xs text-gray-500">AWS certification increases match by 23%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Job Matches -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 mb-6">
+                            <p id="job-pref-title" class="text-sm font-semibold text-slate-900">Préférences de recherche</p>
+                            <p id="job-pref-subtitle" class="mt-1 text-xs text-slate-600">Renseignez vos critères avant d'afficher les emplois recommandés.</p>
+                            <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div class="sm:col-span-2">
+                                    <label id="label-target-site" for="target-site-url" class="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Site / URL</label>
+                                    <input id="target-site-url" list="target-site-options" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="https://example.com/jobs" autocomplete="off">
+                                    <datalist id="target-site-options">
+                                        <option value="https://www.linkedin.com/jobs"></option>
+                                        <option value="https://www.indeed.fr"></option>
+                                        <option value="https://www.welcometothejungle.com/fr/jobs"></option>
+                                        <option value="https://www.apec.fr/candidat/recherche-emploi.html/emploi"></option>
+                                        <option value="https://fr.hellowork.com"></option>
+                                        <option value="https://candidat.francetravail.fr/offres/recherche"></option>
+                                        <option value="https://www.monster.fr/emploi/recherche"></option>
+                                        <option value="https://www.meteojob.com"></option>
+                                        <option value="https://www.jobteaser.com/fr/job-offers"></option>
+                                        <option value="https://www.chooseyourboss.com"></option>
+                                    </datalist>
+                                </div>
+                                <div>
+                                    <label id="label-target-job" for="target-job-title" class="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Métier ciblé</label>
+                                    <input id="target-job-title" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="Développeur Full Stack">
+                                </div>
+                                <div>
+                                    <label id="label-target-country" for="target-country" class="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Pays</label>
+                                    <input id="target-country" list="target-country-options" type="text" class="w-full rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="France" value="France" readonly autocomplete="off">
+                                    <datalist id="target-country-options"></datalist>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label id="label-target-city" for="target-city" class="mb-1 block text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">Ville</label>
+                                    <input id="target-city" list="target-city-options" type="text" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100" placeholder="Ville selon le pays" autocomplete="off">
+                                    <datalist id="target-city-options"></datalist>
+                                </div>
+                            </div>
+                            <button id="show-recommended-jobs" type="button" class="mt-4 w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-700">Voir les emplois recommandés</button>
+                        </div>
+
+                        <div id="recommended-jobs-content" class="hidden">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 id="recommended-jobs-title" class="text-xl font-semibold text-gray-900">Recommended Jobs</h3>
+                            <div class="flex space-x-2">
+                                <button id="filter-all" class="filter-chip active px-3 py-1 rounded-full text-sm font-medium">All</button>
+                                <button id="filter-remote" class="filter-chip px-3 py-1 rounded-full text-sm font-medium">Remote</button>
+                                <button id="filter-full-time" class="filter-chip px-3 py-1 rounded-full text-sm font-medium">Full-time</button>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4" id="job-listings"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="locales/en.js"></script>
+    <script src="locales/fr.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

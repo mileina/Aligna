@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Apply - AI JobMatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .glass-nav { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.9); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .nav-item { transition: all 0.3s ease; }
+        .nav-item.active { background-color: #2563EB; color: white; }
+        .nav-item:hover { background-color: #F3F4F6; }
+        .nav-item.active:hover { background-color: #1D4ED8; }
+        .template-card { transition: all 0.3s ease; border: 2px solid transparent; }
+        .template-card:hover { border-color: #2563EB; }
+        .template-card.selected { border-color: #2563EB; background-color: #EFF6FF; }
+        .progress-step { transition: all 0.3s ease; }
+        .progress-step.completed { background-color: #10B981; }
+        .progress-step.active { background-color: #2563EB; }
+        .cover-letter-editor { min-height: 300px; }
+        .status-badge { display: inline-flex; align-items: center; }
+        .status-pending { background-color: #FEF3C7; color: #92400E; }
+        .status-sent { background-color: #D1FAE5; color: #065F46; }
+        .status-interview { background-color: #DBEAFE; color: #1E40AF; }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Navigation Sidebar -->
+    <nav class="fixed left-0 top-0 h-full w-64 glass-nav border-r border-gray-200 z-50">
+        <div class="p-6">
+            <div class="flex items-center space-x-3 mb-8">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-xl font-bold text-gray-900">AI JobMatch</h1>
+            </div>
+            
+            <div class="space-y-2">
+                <a href="index.html" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                    </svg>
+                    <span class="font-medium">Dashboard</span>
+                </a>
+                
+                <a href="auto-apply.html" class="nav-item active flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    <span class="font-medium">Auto Apply</span>
+                </a>
+                
+                <a href="recruiter.html" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <span class="font-medium">Recruiter</span>
+                </a>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-6 left-6 right-6">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <div class="flex items-center space-x-3">
+                    <img src="resources/candidate-1.jpg" alt="User" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <p class="font-medium text-sm text-gray-900">Sarah Chen</p>
+                        <p class="text-xs text-gray-500">Job Seeker</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="ml-64 min-h-screen">
+        <!-- Header -->
+        <div class="bg-white border-b border-gray-200 px-8 py-6">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Auto Apply Dashboard</h2>
+                    <p class="text-gray-600 mt-1">Generate personalized cover letters and manage applications</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                        Save Draft
+                    </button>
+                    <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Send Applications
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Progress -->
+        <div class="px-8 py-6">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Application Progress</h3>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="progress-step completed w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Job Selected</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 rounded">
+                        <div class="h-1 bg-green-500 rounded" style="width: 100%"></div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="progress-step active w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">2</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-900">Cover Letter</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 rounded">
+                        <div class="h-1 bg-blue-600 rounded" style="width: 50%"></div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="progress-step w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                            <span class="text-gray-600 text-sm font-bold">3</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-500">Send</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Job Details -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Job Details</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <img src="resources/company-1.jpg" alt="Company" class="w-12 h-12 rounded-lg object-cover">
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Senior Frontend Developer</h4>
+                                    <p class="text-sm text-gray-600">TechCorp Solutions</p>
+                                </div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span class="text-gray-600">San Francisco, CA</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                    <span class="text-gray-600">$120k - $160k</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Full-time</span>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-gray-200">
+                                <h5 class="font-medium text-gray-900 mb-2">Requirements</h5>
+                                <ul class="text-sm text-gray-600 space-y-1">
+                                    <li>• 5+ years React experience</li>
+                                    <li>• TypeScript proficiency</li>
+                                    <li>• Node.js knowledge</li>
+                                    <li>• Team leadership experience</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-gray-600">Match Score</span>
+                                    <span class="text-sm font-medium text-blue-600">94%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 h-2 rounded-full" style="width: 94%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cover Letter Generator -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 card-hover">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-semibold text-gray-900">Cover Letter Generator</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-gray-100 text-gray-700 px-3 py-1 rounded-lg text-sm hover:bg-gray-200 transition-colors">
+                                    Templates
+                                </button>
+                                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700 transition-colors">
+                                    Generate AI
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Template Selection -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-gray-700 mb-3">Choose Template</h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                <div class="template-card selected p-3 rounded-lg border cursor-pointer">
+                                    <div class="text-center">
+                                        <div class="w-8 h-8 bg-blue-600 rounded mx-auto mb-2"></div>
+                                        <p class="text-xs font-medium">Professional</p>
+                                    </div>
+                                </div>
+                                <div class="template-card p-3 rounded-lg border cursor-pointer">
+                                    <div class="text-center">
+                                        <div class="w-8 h-8 bg-green-600 rounded mx-auto mb-2"></div>
+                                        <p class="text-xs font-medium">Creative</p>
+                                    </div>
+                                </div>
+                                <div class="template-card p-3 rounded-lg border cursor-pointer">
+                                    <div class="text-center">
+                                        <div class="w-8 h-8 bg-purple-600 rounded mx-auto mb-2"></div>
+                                        <p class="text-xs font-medium">Technical</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Cover Letter Editor -->
+                        <div class="mb-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-sm font-medium text-gray-700">Generated Cover Letter</h4>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">Edit</button>
+                                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">Regenerate</button>
+                                </div>
+                            </div>
+                            <div class="border border-gray-200 rounded-lg p-4 cover-letter-editor bg-gray-50">
+                                <p class="text-gray-800 leading-relaxed">
+                                    <strong>Dear Hiring Manager,</strong>
+                                    <br><br>
+                                    I am writing to express my strong interest in the Senior Frontend Developer position at TechCorp Solutions. With over 5 years of experience in React development and a proven track record of building scalable web applications, I believe I would be a valuable addition to your innovative team.
+                                    <br><br>
+                                    In my current role, I have successfully led the development of complex React applications, implementing TypeScript for type safety and Node.js for backend integration. My experience aligns perfectly with your requirements, particularly in creating cutting-edge web applications that deliver exceptional user experiences.
+                                    <br><br>
+                                    What excites me most about this opportunity is the chance to work with a forward-thinking company that values innovation and technical excellence. I am confident that my technical skills, combined with my team leadership experience, make me an ideal candidate for this position.
+                                    <br><br>
+                                    Thank you for considering my application. I look forward to discussing how my experience and passion for frontend development can contribute to TechCorp Solutions' continued success.
+                                    <br><br>
+                                    <strong>Best regards,</strong><br>
+                                    Sarah Chen
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between items-center">
+                            <div class="flex space-x-3">
+                                <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                                    Preview
+                                </button>
+                                <button class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+                                    Save Template
+                                </button>
+                            </div>
+                            <div class="flex space-x-3">
+                                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                    Send Application
+                                </button>
+                                <button class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                    Auto Apply to Similar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Application History -->
+            <div class="mt-8">
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-6">Application History</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <img src="resources/company-1.jpg" alt="Company" class="w-10 h-10 rounded-lg object-cover">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Senior Frontend Developer</h4>
+                                    <p class="text-sm text-gray-600">TechCorp Solutions • 2 days ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="status-badge status-sent px-3 py-1 rounded-full text-sm font-medium">
+                                    Sent
+                                </span>
+                                <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <img src="resources/company-2.jpg" alt="Company" class="w-10 h-10 rounded-lg object-cover">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">Full Stack Engineer</h4>
+                                    <p class="text-sm text-gray-600">InnovateLabs • 5 days ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="status-badge status-interview px-3 py-1 rounded-full text-sm font-medium">
+                                    Interview Scheduled
+                                </span>
+                                <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center space-x-4">
+                                <img src="resources/office-1.jpg" alt="Company" class="w-10 h-10 rounded-lg object-cover">
+                                <div>
+                                    <h4 class="font-medium text-gray-900">UI/UX Designer</h4>
+                                    <p class="text-sm text-gray-600">DesignStudio Pro • 1 week ago</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <span class="status-badge status-pending px-3 py-1 rounded-full text-sm font-medium">
+                                    Pending
+                                </span>
+                                <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="locales/en.js"></script>
+    <script src="locales/fr.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>

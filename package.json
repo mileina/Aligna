@@ -1,0 +1,12 @@
+{
+  "name": "ai-jobmatch-old",
+  "private": true,
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "country-state-city": "^3.2.1"
+  }
+}
